@@ -1,0 +1,79 @@
+{
+  "ats-2p-110v": [
+    "ats-2p-1.jpg",
+    "ats-2p-2.jpg",
+    "ats-2p-3.jpg",
+    "ats-2p-4.jpg",
+    "ats-2p-5.jpg",
+    "ats-2p-6.jpg"
+  ],
+
+  "ats-4p-110v-220v": [
+    "ats-4polos1.jpg",
+    "ats-4polos-2.jpg",
+    "ats-4polos-3.avif",
+    "ats-4polos-4.avif",
+    "ats-4polos-5.webp",
+    "ats-4polos-6.webp"
+  ],
+
+  "breaker-2p": [
+    "breker-2p-1.avif",
+    "breker-2p-2.avif"
+  ],
+
+  "breaker-3p": [
+    "breker-3p-1.avif",
+    "breker-3p-2.avif"
+  ],
+
+  "ecoflow-delta2": [
+    "delta2-1.avif",
+    "delta2-2.jpg",
+    "delta2-3.webp"
+  ],
+
+  "ecoflow-delta2-max": [
+    "delta2-max-1.avif",
+    "delta2-max-2.png",
+    "delta2-max-3.webp",
+    "delta2-max-4.jpg"
+  ],
+
+  "ecoflow-delta2-pro": [
+    "delta-pro-1.avif",
+    "delta-pro-2.avif",
+    "delta-pro-3.avif",
+    "delta-pro-4.jpg"
+  ],
+
+  "ecoflow-delta3-ultra": [
+    "delta3-ultra-2.jpg",
+    "delta3-ultra-3.jpg",
+    "delta3-ultra-4.jpg"
+  ],
+
+  "monitor-multifuncion": [
+    "monitor-multifuncion-1.avif",
+    "monitor-multifuncion-2.jpg",
+    "monitor-multifuncion-3.jpg"
+  ],
+
+  "nema-5-15p": [
+    "conector-nema-5-15P.jpg"
+  ],
+
+  "nema-5-20r": [
+    "conector-nema-5-20R.jpg"
+  ],
+
+  "nema-tt-30p": [
+    "conector-nema-tt-30P.jpg"
+  ],
+
+  "protector-voltaje": [
+    "protector-de-voltaje.avif",
+    "protector-de-voltaje-2.avif"
+  ]
+}
+

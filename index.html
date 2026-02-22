@@ -1,0 +1,1730 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HomePower Switch – Energía bajo control en tu hogar</title>
+  <meta name="description" content="HomePower Switch: Paneles eléctricos y Transfer Switch Automáticos (ATS) a pedido en Florida. Compatibles con EcoFlow y otros generadores. Proyecto a medida según voltaje, conexiones y protecciones." />
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:rgba(15,26,51,.72);
+      --text:#e9eefc;
+      --muted:#b7c3e6;
+      --line:rgba(255,255,255,.10);
+      --accent:#63b3ff;
+      --accent2:#7cffc9;
+      --danger:#ff6b6b;
+      --ok:#7cffc9;
+      --shadow:0 10px 30px rgba(0,0,0,.22);
+    }
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      color:var(--text);
+      background: var(--bg);
+      line-height:1.45;
+      min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none}
+
+    /* IMPORTANTE: capas del fondo por debajo del contenido */
+    .bgLayer{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      transform:scale(1.02);
+      opacity:0;
+      transition:opacity 1.2s ease;
+      pointer-events:none;
+    }
+    .bgLayer.on{ opacity:1; }
+
+    .bgOverlay{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(99,179,255,.16), transparent 60%),
+        radial-gradient(800px 520px at 85% 15%, rgba(124,255,201,.12), transparent 55%),
+        linear-gradient(rgba(11,18,32,.82), rgba(11,18,32,.86));
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:22px;
+      position:relative;
+      z-index:2;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 0;gap:14px;flex-wrap:wrap;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .brandText{display:flex;flex-direction:column}
+    .brandText b{font-size:18px;letter-spacing:.4px}
+    .brandText span{font-size:12px;color:var(--muted)}
+
+    /* logotipo más grande */
+    .logo{
+      width:86px;height:86px;object-fit:contain;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      padding:8px;
+    }
+
+    .navlinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:12px 16px;border-radius:12px;border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      transition:transform .08s ease, background .2s ease, border-color .2s ease, opacity .2s ease;
+      font-weight:650; cursor:pointer;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.18)}
+    .btn.primary{
+      background:linear-gradient(135deg, rgba(99,179,255,.95), rgba(124,255,201,.85));
+      color:#041022;border:0;
+    }
+    .btn.small{padding:9px 12px;border-radius:10px;font-size:13px}
+    .btn.disabled{opacity:.45;pointer-events:none}
+
+    h1{font-size:34px;line-height:1.1;margin:0 0 10px}
+    h2{font-size:22px;margin:0 0 10px}
+    h3{font-size:16px;margin:0 0 8px}
+    p{margin:0 0 10px;color:var(--muted)}
+    ul{margin:8px 0 0 18px;color:var(--muted)}
+    li{margin:6px 0}
+
+    .hero{padding:10px 0 0}
+    .heroGrid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;align-items:stretch}
+    @media (max-width:900px){.heroGrid{grid-template-columns:1fr}}
+    .section{padding:14px 0}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media (max-width:900px){.grid3{grid-template-columns:1fr}}
+
+    .kpi{
+      display:flex;flex-direction:column;gap:6px;
+      padding:12px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+    }
+    .kpi b{font-size:16px}
+    .kpi span{font-size:12px;color:var(--muted)}
+
+    .note{
+      font-size:12px;color:var(--muted);
+      border-left:3px solid rgba(124,255,201,.55);
+      padding-left:10px;margin-top:10px
+    }
+    .warn{
+      border-left:3px solid rgba(255,107,107,.7);
+      padding-left:10px;font-size:12px;color:var(--muted)
+    }
+    .info{
+      border-left:3px solid rgba(99,179,255,.7);
+      padding-left:10px;font-size:12px;color:var(--muted)
+    }
+
+    .optionsWrap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:900px){.optionsWrap{grid-template-columns:1fr}}
+    .optCard{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      border-radius:16px;
+      padding:14px;
+    }
+    .optLabel{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+    .optLabelLeft{display:flex;align-items:center;gap:8px}
+    .optLabel .dash{
+      display:inline-grid;place-items:center;
+      width:22px;height:22px;border-radius:8px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);
+      color:var(--muted);
+      font-weight:900;
+    }
+    .optRow{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{
+      padding:10px 12px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      cursor:pointer;
+      font-size:13px;
+      user-select:none;
+      transition:background .15s ease, border-color .15s ease, transform .05s ease;
+    }
+    .chip:hover{background:rgba(255,255,255,.09);transform:translateY(-1px)}
+    .chip.active{
+      background:linear-gradient(135deg, rgba(99,179,255,.95), rgba(124,255,201,.85));
+      color:#041022;border-color:transparent;
+      font-weight:850;
+    }
+    .linkTiny{
+      font-size:12px;color:var(--text);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      padding:7px 10px;border-radius:999px;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .linkTiny:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.18)}
+    .hintTiny{font-size:12px;color:var(--muted);margin-top:8px}
+
+    .contact{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
+    @media (max-width:900px){.contact{grid-template-columns:1fr}}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
+    input, select, textarea{
+      width:100%;
+      padding:12px 12px;border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      outline:none;
+    }
+    textarea{min-height:120px;resize:vertical}
+
+    select{
+      background-color:rgba(10,16,30,.92);
+      color:var(--text);
+    }
+    select option{
+      background-color:#0b1220;
+      color:#e9eefc;
+    }
+
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
+    .resultBox{
+      border:1px dashed rgba(124,255,201,.45);
+      background:rgba(124,255,201,.06);
+      border-radius:16px;
+      padding:12px;
+      margin-top:12px;
+    }
+
+    .footer{
+      padding:18px 0 30px;color:var(--muted);font-size:12px;
+      display:flex;gap:12px;align-items:center;flex-wrap:wrap
+    }
+    .footer .logo{width:44px;height:44px;border-radius:14px}
+
+    .statusRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+    .statusPill{
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(255,255,255,.05);font-size:12px;color:var(--muted)
+    }
+    .statusPill.ok{border-color:rgba(124,255,201,.45)}
+    .statusPill.bad{border-color:rgba(255,107,107,.55)}
+    .statusPill.warn{border-color:rgba(255,200,107,.55)}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+
+    /* Biblioteca visible */
+    .libGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:10px;}
+    @media (max-width:1000px){.libGrid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:520px){.libGrid{grid-template-columns:1fr}}
+    .libCard{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      border-radius:16px;
+      overflow:hidden;
+      cursor:pointer;
+      transition:transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .libCard:hover{transform:translateY(-2px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .libThumb{width:100%;height:140px;object-fit:cover;display:block;background:rgba(255,255,255,.04);}
+    .libBody{padding:12px}
+    .libTitle{font-weight:850;margin:0 0 6px}
+    .libMeta{font-size:12px;color:var(--muted);margin:0}
+
+    /* Modal galería */
+    .modalBack{
+      position:fixed;inset:0;
+      background:rgba(0,0,0,.62);
+      display:none;
+      align-items:center;justify-content:center;
+      padding:16px;
+      z-index:9999;
+    }
+    .modal{
+      width:min(980px, 100%);
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(12,18,34,.96);
+      border-radius:18px;
+      box-shadow:0 30px 80px rgba(0,0,0,.5);
+      overflow:hidden;
+    }
+    .modalTop{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:14px 14px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+    }
+    .modalTop b{font-size:14px}
+    .modalBtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .modalBtn{
+      padding:9px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);cursor:pointer;font-weight:750;font-size:13px;
+    }
+    .modalBtn:hover{background:rgba(255,255,255,.10)}
+    .modalMain{display:grid;grid-template-columns:1.2fr .8fr;gap:0;}
+    @media (max-width:900px){.modalMain{grid-template-columns:1fr}}
+    .modalBig{padding:12px;border-right:1px solid rgba(255,255,255,.12);}
+    @media (max-width:900px){.modalBig{border-right:0;border-bottom:1px solid rgba(255,255,255,.12)}}
+    .modalBig img{
+      width:100%;max-height:520px;object-fit:contain;
+      background:rgba(255,255,255,.03);
+      border-radius:14px;border:1px solid rgba(255,255,255,.10);
+    }
+    .modalSide{padding:12px}
+    .thumbRow{display:flex;flex-wrap:wrap;gap:10px}
+    .thumb{
+      width:96px;height:72px;object-fit:cover;
+      border-radius:12px;border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      cursor:pointer;
+      opacity:.9;
+    }
+    .thumb:hover{opacity:1}
+    .thumb.active{outline:2px solid rgba(124,255,201,.65);opacity:1}
+
+    /* Validación */
+    .fieldMsg{font-size:12px;margin-top:6px;color:var(--muted);}
+    .fieldMsg.bad{color:#ffb3b3}
+    .fieldMsg.ok{color:#b9ffd9}
+
+    /* ocultar indicadores en la primera página */
+    .statusRow{display:none !important;}
+
+    /* Dirección: dropdown sugerencias (Google Maps Places / fallback) */
+    .addrWrap{position:relative;}
+    .addrDropdown{
+      position:absolute;left:0;right:0;top:calc(100% + 6px);
+      background:rgba(12,18,34,.98);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:12px;
+      box-shadow:0 18px 50px rgba(0,0,0,.45);
+      overflow:hidden;
+      display:none;
+      z-index:50;
+    }
+    .addrItem{
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      cursor:pointer;
+      color:rgba(233,238,252,.92);
+      font-size:13px;
+    }
+    .addrItem:last-child{border-bottom:0}
+    .addrItem:hover{background:rgba(255,255,255,.06)}
+    .addrSub{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+
+    /* "Ver fotos" debajo de Equipo (solo aparece si hay match) */
+    .inlineTools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px}
+  </style>
+</head>
+
+<body>
+  <!-- Fondo slideshow -->
+  <div class="bgLayer" id="bgA" aria-hidden="true"></div>
+  <div class="bgLayer" id="bgB" aria-hidden="true"></div>
+  <div class="bgOverlay" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <!-- NAV -->
+    <div class="nav">
+      <div class="brand">
+        <img class="logo" src="logotipo.png" alt="HomePower Switch Logo" />
+        <div class="brandText">
+          <b>HomePower Switch</b>
+          <span>Energía bajo control en tu hogar.</span>
+        </div>
+      </div>
+
+      <div class="navlinks">
+        <a class="btn small" href="#inicio">Inicio</a>
+        <a class="btn small" href="#que">Qué puedes solicitar</a>
+        <a class="btn small" href="#personalizacion">Personalización</a>
+        <a class="btn small" href="#contacto">Contacto</a>
+        <a class="btn small" href="#proyecto">Solicitar proyecto</a>
+        <a class="btn small" href="#opciones">Selecciona opciones</a>
+        <a class="btn small" href="#biblioteca">Biblioteca</a>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div id="inicio" class="hero">
+      <div class="heroGrid">
+        <div class="card">
+          <h1>Paneles eléctricos y Transfer Switch Automáticos (ATS) a pedido · Florida</h1>
+          <p><b>HomePower Switch: energía bajo control en tu hogar.</b></p>
+
+          <p>
+            HomePower Switch nace de una necesidad real: que la energía del hogar no dependa de improvisaciones, sino de un
+            <b>cambio seguro, ordenado y bien diseñado</b> entre la red eléctrica y un sistema de respaldo.
+          </p>
+
+          <p>
+            El nombre refleja exactamente lo que hacemos: <b>Home</b>, porque cada proyecto se diseña para la vivienda real;
+            <b>Power</b>, porque la energía debe estar protegida y correctamente distribuida; y <b>Switch</b>, porque el cambio
+            entre fuentes debe hacerse de forma inteligente, automática y segura.
+          </p>
+
+          <p>
+            Diseñamos y construimos <b>paneles eléctricos y ATS a pedido</b>, compatibles con EcoFlow y otros generadores,
+            definidos según voltaje (110 V o 220 V), tipo de conector NEMA, longitudes y nivel de protección requerido.
+          </p>
+
+          <p>
+            Cada proyecto puede incluir protección contra <b>bajo y alto voltaje</b>, retardo de reconexión, toma de servicio
+            protegida para carga y opciones informativas, con un enfoque claro:
+            <b>proteger tu instalación y mantener continuidad energética de forma confiable</b>.
+          </p>
+
+          <p class="note">
+            Si tienes dudas sobre tu caso específico, lo aclaramos directamente en tu proyecto y te brindaremos asesoría técnica antes de construir.
+          </p>
+
+          <div class="statusRow">
+            <span id="dbStatus" class="statusPill">Base de precios: cargando…</span>
+            <span id="sendStatus" class="statusPill warn">Envío: bloqueado (faltan datos)</span>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+            <button class="btn primary" id="btnPedir">Pedir mi sistema</button>
+            <a class="btn" href="tel:+17865998225" aria-label="Llamar a (786) 599-8225">📞 (786) 599-8225</a>
+            <a class="btn" href="mailto:jorgedanlm@gmail.com" aria-label="Enviar correo a jorgedanlm@gmail.com">📧 jorgedanlm@gmail.com</a>
+            <a class="btn primary" id="btnWhatsAppTop" href="#" rel="noopener" aria-label="Abrir WhatsApp">WhatsApp</a>
+          </div>
+
+          <p class="note">
+            Tiempo típico de fabricación: <b>7 a 30 días</b> (según complejidad). Garantía: <b>30 a 60 días</b>.
+            Precio final depende del diseño y componentes seleccionados.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2>Aclaración importante: Proyectos 220 V</h2>
+          <p class="info">
+            Los proyectos <b>220 V</b> están pensados para viviendas que usan <b>dos fases diferentes</b> dentro de la casa,
+            funcionando cada una a <b>110 V con su neutro</b> (configuración común en Cuba).
+          </p>
+          <p class="info">
+            Si se utiliza un <b>generador 110 V</b>, solo se tendrá <b>una fase de 110 V con su neutro</b>, lo que significa
+            que circulará dentro del hogar <b>una sola fase</b> durante el respaldo.
+          </p>
+          <p class="warn">
+            Si existe algún equipo que trabaje con <b>220 V</b>, se debe <b>dejar fuera</b> de este sistema de respaldo.
+            Cualquier duda, indícala directamente en tu proyecto y te brindaremos asesoría técnica.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUÉ PUEDES SOLICITAR -->
+    <div id="que" class="section">
+      <div class="card">
+        <h2>Qué puedes solicitar</h2>
+        <div class="grid3" style="margin-top:10px">
+          <div class="kpi">
+            <b>1) Panel transfer switch automático</b>
+            <span>Con protección de voltaje para todo el hogar o solo en el servicio de carga (EcoFlow o generador)</span>
+          </div>
+          <div class="kpi">
+            <b>2) Conexiones</b>
+            <span>Conector NEMA (5-15P o TT-30P), 110/220 V y longitudes</span>
+          </div>
+          <div class="kpi">
+            <b>3) Protecciones</b>
+            <span>Voltaje bajo/alto con retardo 1–3 min, general o dedicada</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONALIZACIÓN -->
+    <div id="personalizacion" class="section">
+      <div class="card">
+        <h2>Personalización (a pedido)</h2>
+        <ul>
+          <li><b>Tipo de conector NEMA:</b> 5-15P o TT-30P</li>
+          <li><b>Voltaje del sistema:</b> 110 V o 220 V</li>
+          <li><b>Protección de voltaje:</b> bajo/alto con <b>retardo</b> (1 a 3 min)</li>
+          <li><b>Toma de servicio protegida para carga:</b> incluida (EcoFlow o generador)</li>
+          <li><b>Longitudes:</b> entrante (1–5 ft), saliente (1–5 ft), EcoFlow/generador (4–8 ft), toma servicio (1–8 ft)</li>
+          <li><b>Pantalla informativa:</b> opcional</li>
+        </ul>
+        <p class="warn" style="margin-top:10px">
+          Componentes sobre riel DIN 35mm. Proyecto a pedido con especificación del cliente y asesoría profesional.
+        </p>
+      </div>
+    </div>
+
+    <!-- CONTACTO ANTES DEL PROYECTO -->
+    <div id="contacto" class="section">
+      <div class="card">
+        <h2>Contacto directo</h2>
+        <p><b>Teléfono:</b> (786) 599-8225</p>
+        <p><b>Correo:</b> jorgedanlm@gmail.com</p>
+        <p><b>Zona:</b> Florida</p>
+
+        <div class="divider"></div>
+
+        <h2>Qué incluir para realizar proyecto más rápido</h2>
+        <ul>
+          <li>Equipo (marca y modelo)</li>
+          <li>Nivel de protección (parcial / total)</li>
+          <li>Voltaje del sistema (110 V / 220 V)</li>
+          <li>Conector NEMA (5-15P / TT-30P)</li>
+          <li>Protección bajo/alto y retardo (1 a 3 min)</li>
+          <li>Longitudes: entrante (1–5), saliente (1–5), EcoFlow/generador (4–8), toma de servicio (1–8)</li>
+          <li>Opcional: pantalla informativa</li>
+          <li>Dirección completa con ZIP Code</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SOLICITAR PROYECTO -->
+    <div id="proyecto" class="section">
+      <div class="card">
+        <h2>Solicitar proyecto</h2>
+        <p>Completa tus datos. Luego seleccionas opciones técnicas. Al final se genera el resumen con precio listo para enviar.</p>
+
+        <div class="contact" style="margin-top:10px">
+          <div>
+            <label>Nombre (obligatorio)</label>
+            <input id="name" placeholder="Tu nombre" />
+            <div id="msgName" class="fieldMsg"></div>
+
+            <label>Número telefónico (obligatorio)</label>
+            <input id="phone" placeholder="Ej.: 7865998225" inputmode="tel" />
+            <div id="msgPhone" class="fieldMsg"></div>
+
+            <label>Equipo / Generador (marca y modelo) (obligatorio)</label>
+            <input id="equipment" placeholder="Ej.: EcoFlow Delta Pro / Honda EU2200i / (marca y modelo)" />
+            <div id="msgEquip" class="fieldMsg"></div>
+            <div class="inlineTools">
+              <button type="button" id="btnEquipGallery" class="linkTiny" style="display:none">Ver fotos del equipo</button>
+            </div>
+
+            <label>Nivel de protección de voltaje (obligatorio)</label>
+            <select id="goal">
+              <option value="">— Seleccionar —</option>
+              <option value="Protección de voltaje parcial (solo toma de servicio para carga del EcoFlow o generador)">
+                Protección de voltaje parcial (solo toma de servicio para carga del EcoFlow o generador)
+              </option>
+              <option value="Protección de voltaje total (toma de servicio para carga del EcoFlow o generador + toda la casa)">
+                Protección de voltaje total (toma de servicio para carga del EcoFlow o generador + toda la casa)
+              </option>
+            </select>
+            <div id="msgGoal" class="fieldMsg"></div>
+
+            <label>Dirección del pedido (entrega o ubicación del proyecto) (obligatorio)</label>
+            <div class="addrWrap">
+              <input id="address" placeholder="Ej.: 1234 NW 56th St, Apt 3B (3er piso), Miami, FL, Estados Unidos, 33142" autocomplete="off" />
+              <div id="addrDropdown" class="addrDropdown" role="listbox" aria-label="Sugerencias de dirección"></div>
+            </div>
+            <div id="msgAddress" class="fieldMsg"></div>
+
+            <label>Detalles adicionales (obligatorio)</label>
+            <textarea
+              id="details"
+              placeholder="Describe información adicional útil para tu proyecto: tipo de vivienda (casa/apto), cargas prioritarias, limitaciones eléctricas conocidas, preferencia de ubicación del panel, condiciones especiales del sitio, etc."
+            ></textarea>
+            <div id="msgDetails" class="fieldMsg"></div>
+
+            <p class="note">
+              En el siguiente paso seleccionarás opciones del sistema. Cuando todo esté completo, verás el resumen final con total estimado y clasificación.
+            </p>
+          </div>
+
+          <div>
+            <h2>Guía rápida</h2>
+            <p class="info">
+              Completa el formulario y luego ve a <b>Selecciona opciones</b>. Cuando el proyecto esté completo, se habilitarán los botones de envío al final.
+            </p>
+            <p class="note">
+              Recomendación: escribe la dirección con comas e incluye ZIP Code (5 dígitos).
+            </p>
+            <p class="note" style="margin-top:10px">
+              Dirección: esta página puede sugerir direcciones (Google Maps) mientras escribes, para reducir errores.
+              Si no se configura API, el campo funciona normal.
+            </p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <p class="hintTiny">
+          Siguiente paso: <a class="linkTiny" href="#opciones">Selecciona opciones</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- SELECCIONA OPCIONES -->
+    <div id="opciones" class="section">
+      <div class="card">
+        <h2>Selecciona opciones</h2>
+        <p>Toca las opciones para incluirlas automáticamente en tu <b>proyecto</b> y calcular el costo total.</p>
+
+        <div class="optionsWrap" style="margin-top:10px">
+          <div class="optCard">
+            <div class="optLabel">
+              <div class="optLabelLeft"><span class="dash">-</span> Voltaje del sistema</div>
+              <button class="linkTiny" data-lib-open="voltaje">Ver fotos</button>
+            </div>
+            <div class="optRow">
+              <span class="chip" data-group="volt" data-value="110 V">110 V</span>
+              <span class="chip" data-group="volt" data-value="220 V">220 V</span>
+            </div>
+            <div class="hintTiny">Obligatorio.</div>
+          </div>
+
+          <div class="optCard">
+            <div class="optLabel">
+              <div class="optLabelLeft"><span class="dash">-</span> Conector NEMA (EcoFlow/Generador)</div>
+              <button class="linkTiny" data-lib-open="nema">Ver fotos</button>
+            </div>
+            <div class="optRow">
+              <span class="chip" data-group="nema" data-value="NEMA 5-15P">NEMA 5-15P</span>
+              <span class="chip" data-group="nema" data-value="NEMA TT-30P">NEMA TT-30P</span>
+            </div>
+            <div class="hintTiny">Obligatorio.</div>
+          </div>
+
+          <div class="optCard">
+            <div class="optLabel">
+              <div class="optLabelLeft"><span class="dash">-</span> Pies cable ENTRANTE (panel→casa)</div>
+            </div>
+            <div class="optRow" id="lenInRow"></div>
+            <div class="hintTiny">Obligatorio (1–5 ft).</div>
+          </div>
+
+          <div class="optCard">
+            <div class="optLabel">
+              <div class="optLabelLeft"><span class="dash">-</span> Pies cable SALIENTE (panel→casa)</div>
+            </div>
+            <div class="optRow" id="lenOutRow"></div>
+            <div class="hintTiny">Obligatorio (1–5 ft).</div>
+          </div>
+
+          <div class="optCard">
+            <div class="optLabel">
+              <div class="optLabelLeft"><span class="dash">-</span> Pies cable EcoFlow/Generador (interconexión)</div>
+              <button class="linkTiny" data-lib-open="ats">Ver fotos</button>
+            </div>
+            <div class="optRow" id="lenGenRow"></div>
+            <div class="hintTiny">Obligatorio (4–8 ft).</div>
+          </div>
+
+          <div class="optCard">
+            <div class="optLabel">
+              <div class="optLabelLeft"><span class="dash">-</span> Protección (alcance)</div>
+              <button class="linkTiny" data-lib-open="protector">Ver fotos</button>
+            </div>
+            <div class="optRow">
+              <span class="chip" data-group="prot" data-value="General (todo el hogar)">General (todo el hogar)</span>
+              <span class="chip" data-group="prot" data-value="Dedicada (solo toma de servicio)">Dedicada (solo toma de servicio)</span>
+            </div>
+            <div class="hintTiny">Obligatorio.</div>
+          </div>
+
+          <div class="optCard">
+            <div class="optLabel">
+              <div class="optLabelLeft"><span class="dash">-</span> Retardo de reconexión (calle)</div>
+            </div>
+            <div class="optRow">
+              <span class="chip" data-group="delay" data-value="1 min">1 min</span>
+              <span class="chip" data-group="delay" data-value="2 min">2 min</span>
+              <span class="chip" data-group="delay" data-value="3 min">3 min</span>
+            </div>
+            <div class="hintTiny">Obligatorio (1–3 min).</div>
+          </div>
+
+          <div class="optCard">
+            <div class="optLabel">
+              <div class="optLabelLeft"><span class="dash">-</span> Pantalla informativa (opcional)</div>
+              <button class="linkTiny" data-lib-open="monitor">Ver fotos</button>
+            </div>
+            <div class="optRow">
+              <span class="chip" data-group="screen" data-value="SI">Sí</span>
+              <span class="chip" data-group="screen" data-value="NO">No</span>
+            </div>
+          </div>
+
+          <div class="optCard">
+            <div class="optLabel">
+              <div class="optLabelLeft"><span class="dash">-</span> Toma de servicio para carga (NEMA 5-20R) (incluida)</div>
+              <button class="linkTiny" data-lib-open="nema520r">Ver fotos</button>
+            </div>
+            <p class="hintTiny" style="margin:0 0 10px 0">
+              Esta toma de servicio protegida queda incluida. Selecciona el largo del cable.
+            </p>
+            <div class="optLabel" style="margin-top:10px">
+              <div class="optLabelLeft"><span class="dash">-</span> Pies cable toma de servicio</div>
+            </div>
+            <div class="optRow" id="lenServiceRow"></div>
+            <div class="hintTiny">Obligatorio (1–8 ft).</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+          <button class="btn primary" id="btnBuild">Actualizar proyecto</button>
+          <span class="statusPill" id="selectionStatus">Selección: incompleta</span>
+        </div>
+
+        <div id="finalResultBox" class="resultBox" style="display:none">
+          <b>Clasificación del proyecto:</b> <span id="finalClass" class="mono"></span><br/>
+          <b>Total estimado:</b> <span id="finalTotal" class="mono"></span><br/>
+          <b>Resumen listo para enviar:</b>
+          <div id="finalText" class="mono" style="white-space:pre-wrap;margin-top:8px"></div>
+
+          <div class="divider"></div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn" id="btnEmail" href="#">Enviar por correo</a>
+            <a class="btn primary" id="btnWhatsApp" href="#" rel="noopener">Enviar por WhatsApp</a>
+          </div>
+
+          <p class="note" id="sendHint">
+            Para habilitar el envío debes completar: nombre, teléfono, equipo (marca/modelo), nivel de protección, dirección completa y detalles.
+          </p>
+        </div>
+
+        <p class="note">
+          El total se calcula leyendo <b>pricedb.csv</b> (exportado desde tu Excel). Si cambias precios en Excel, exportas de nuevo y reemplazas el CSV.
+        </p>
+      </div>
+    </div>
+
+    <!-- BIBLIOTECA VISIBLE -->
+    <div id="biblioteca" class="section">
+      <div class="card">
+        <h2>Biblioteca de componentes (referencia visual)</h2>
+        <p>
+          Esta galería ayuda a identificar los equipos y componentes usados en el proyecto.
+          Puedes tocar cualquier tarjeta para ver las fotos.
+        </p>
+
+        <div id="libGrid" class="libGrid"></div>
+
+        <p class="note">
+          En el futuro podrás agregar más imágenes subiéndolas a la carpeta <span class="mono">images/library/</span> y actualizando <span class="mono">library.json</span>.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <img class="logo" src="logotipo.png" alt="HomePower Switch Logo" />
+      <div>
+        © <span id="year"></span> <b>HomePower Switch</b> · Florida · (786) 599-8225 · jorgedanlm@gmail.com
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL GALERÍA -->
+  <div id="modalBack" class="modalBack" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Galería de imágenes">
+      <div class="modalTop">
+        <b id="modalTitle">Galería</b>
+        <div class="modalBtns">
+          <button class="modalBtn" id="modalPrev">◀</button>
+          <button class="modalBtn" id="modalNext">▶</button>
+          <button class="modalBtn" id="modalClose">Cerrar</button>
+        </div>
+      </div>
+
+      <div class="modalMain">
+        <div class="modalBig">
+          <img id="modalBigImg" alt="Imagen de galería" src="" />
+        </div>
+        <div class="modalSide">
+          <div id="thumbRow" class="thumbRow"></div>
+          <p class="hintTiny" style="margin-top:10px">
+            Nota: Las imágenes son referenciales para apoyar el proyecto. Para dudas técnicas, indícalas en el formulario.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =============================
+    // CONFIG
+    // =============================
+    const PHONE_E164 = "17865998225";
+    const EMAIL = "jorgedanlm@gmail.com";
+
+    // TAREA (a futuro): cuando se genere un nuevo código, preguntar dónde se va a subir.
+    // - Si es GitHub Pages / subcarpeta: mantener assetUrl() como está.
+    // - Si es dominio raíz o servidor propio: puede simplificarse.
+
+    // =============================
+    // GOOGLE MAPS (Places Autocomplete)
+    // =============================
+    // IMPORTANTE:
+    // - Para que las sugerencias aparezcan dentro del campo de dirección, necesitas una API KEY con Places habilitado.
+    // - Si la key está vacía, el campo funciona normal (sin sugerencias).
+    // - Cuando lo vayas a subir a otra web, probablemente debas restringir la key por dominio.
+    const GOOGLE_MAPS_API_KEY = ""; // <-- pon tu key aquí cuando decidas activarlo.
+
+    // =============================
+    // FONDO SLIDESHOW (8 fotos)
+    // =============================
+    const BG_IMAGES = [
+      "images/background/fondo-1.png",
+      "images/background/fondo-2.jpg",
+      "images/background/fondo-3.jpg",
+      "images/background/fondo-4.jpg",
+      "images/background/fondo-5.webp",
+      "images/background/fondo-6.jpg",
+      "images/background/fondo-7.jpg",
+      "images/background/fondo-8.jpg"
+    ];
+
+    function assetUrl(relPath){
+      return new URL(relPath, document.baseURI).toString();
+    }
+
+    function preloadImage(resolvedUrl){
+      return new Promise((resolve, reject) => {
+        const im = new Image();
+        im.onload = () => resolve(resolvedUrl);
+        im.onerror = () => reject(resolvedUrl);
+        im.src = resolvedUrl;
+      });
+    }
+
+    async function startBackgroundSlideshow(){
+      const a = document.getElementById("bgA");
+      const b = document.getElementById("bgB");
+      if (!a || !b || !BG_IMAGES.length) return;
+
+      const candidates = BG_IMAGES.map(assetUrl);
+
+      const ok = [];
+      const bad = [];
+      for (const src of candidates){
+        try{
+          await preloadImage(src);
+          ok.push(src);
+        }catch(e){
+          bad.push(src);
+        }
+      }
+
+      console.log("BG OK:", ok);
+      console.warn("BG FAIL:", bad);
+
+      if (!ok.length){
+        console.error("No cargó ninguna imagen de fondo. Revisa nombres/rutas (case sensitive) y que estén en el repo.");
+        return;
+      }
+
+      let idx = 0;
+      let showA = true;
+
+      a.style.backgroundImage = `url("${ok[idx]}")`;
+      a.classList.add("on");
+
+      setInterval(() => {
+        idx = (idx + 1) % ok.length;
+        const next = ok[idx];
+
+        if (showA){
+          b.style.backgroundImage = `url("${next}")`;
+          b.classList.add("on");
+          a.classList.remove("on");
+        } else {
+          a.style.backgroundImage = `url("${next}")`;
+          a.classList.add("on");
+          b.classList.remove("on");
+        }
+        showA = !showA;
+      }, 9000);
+    }
+
+    // =============================
+    // HELPERS
+    // =============================
+    function $(id){ return document.getElementById(id); }
+    function normWordsCount(text){
+      const t = (text || "").trim();
+      if (!t) return 0;
+      return t.split(/\s+/).filter(Boolean).length;
+    }
+    function digitsOnly(s){ return (s || "").replace(/[^\d]/g, ""); }
+
+    // =============================
+    // 1) PRICE DB (pricedb.csv)
+    // =============================
+    let PRICE_DB = [];
+    let DB_READY = false;
+
+    async function loadPriceDB(url = "pricedb.csv") {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("No pude cargar pricedb.csv. Verifica que esté junto a index.html");
+      const text = await res.text();
+
+      const lines = text.replace(/\r/g, "").split("\n").filter(l => l.trim().length);
+      const headers = lines[0].split(",").map(h => h.trim());
+
+      return lines.slice(1).map(line => {
+        const parts = line.split(",");
+        const row = {};
+        headers.forEach((h, i) => row[h] = (parts[i] ?? "").trim());
+
+        row.group_id = Number(row.group_id || 0);
+        row.qty = Number(row.qty || 0);
+        row.unit_price = Number(row.unit_price || 0);
+
+        row.price_unit = (row.price_unit || "").trim();
+        row.condition = (row.condition || "").trim();
+        row.depends_on = (row.depends_on || "").trim();
+        return row;
+      });
+    }
+
+    function matchesCondition(rowCond, ctx) {
+      if (!rowCond || rowCond.toLowerCase() === "siempre") return true;
+      const parts = rowCond.split(/\s+AND\s+/i).map(s => s.trim());
+      return parts.every(expr => {
+        const [k, v] = expr.split("=").map(x => (x || "").trim());
+        if (!k) return false;
+        const ctxVal = (ctx[k] ?? "").toString().trim();
+        return ctxVal === v;
+      });
+    }
+
+    function rowCost(row, ctx) {
+      if (!matchesCondition(row.condition, ctx)) return 0;
+
+      if (row.price_unit === "each") {
+        return (row.qty || 0) * (row.unit_price || 0);
+      }
+
+      if (row.price_unit === "per_ft") {
+        const dep = (row.depends_on || "").trim();
+        let feet = 0;
+
+        if (dep.includes("+")) {
+          feet = dep.split("+").map(x => Number(ctx[x.trim()] || 0)).reduce((a,b) => a + b, 0);
+        } else {
+          feet = Number(ctx[dep] || 0);
+        }
+
+        return (row.unit_price || 0) * feet * ((row.qty || 1));
+      }
+
+      return 0;
+    }
+
+    function calcTotalFromDB(ctx) {
+      return PRICE_DB.reduce((sum, row) => sum + rowCost(row, ctx), 0);
+    }
+
+    // =============================
+    // 2) STATE (selecciones)
+    // =============================
+    const state = {
+      volt: "",
+      nema: "",
+      lenIn: "",
+      lenOut: "",
+      lenGen: "",
+      prot: "",
+      delay: "",
+      screen: "",
+      lenService: ""
+    };
+
+    function ensureOneSelected(group){
+      document.querySelectorAll(`.chip[data-group="${group}"]`).forEach(ch => ch.classList.remove("active"));
+      const chosen = document.querySelector(`.chip[data-group="${group}"][data-value="${state[group]}"]`);
+      if (chosen) chosen.classList.add("active");
+    }
+
+    function bindChips(){
+      document.querySelectorAll(".chip").forEach(chip=>{
+        chip.addEventListener("click", ()=>{
+          const group = chip.getAttribute("data-group");
+          const value = chip.getAttribute("data-value");
+          state[group] = (state[group] === value) ? "" : value;
+          ensureOneSelected(group);
+          refreshAll();
+        });
+      });
+    }
+
+    function makeLengthChips(containerId, group, from, to, suffix){
+      const row = $(containerId);
+      for (let i=from;i<=to;i++){
+        const span = document.createElement("span");
+        span.className = "chip";
+        span.setAttribute("data-group", group);
+        span.setAttribute("data-value", `${i} ${suffix}`);
+        span.textContent = `${i} ${suffix}`;
+        row.appendChild(span);
+      }
+    }
+
+    function isCompleteSelection(){
+      if (!DB_READY) return false;
+      const required = [
+        state.volt,
+        state.nema,
+        state.lenIn,
+        state.lenOut,
+        state.lenGen,
+        state.prot,
+        state.delay,
+        state.screen,
+        state.lenService
+      ];
+      return !required.some(v => !v);
+    }
+
+    function buildCtx(){
+      const volt = (state.volt === "110 V") ? "110" : (state.volt === "220 V") ? "220" : "";
+      const lenToNum = (s)=> parseInt((s || "0").split(" ")[0], 10) || 0;
+
+      return {
+        voltaje: volt,
+        conector: state.nema || "",
+        pantalla: state.screen || "NO",
+        toma_servicio: "SI",
+        len_in: lenToNum(state.lenIn),
+        len_out: lenToNum(state.lenOut),
+        len_gen: lenToNum(state.lenGen),
+        len_service: lenToNum(state.lenService)
+      };
+    }
+
+    function classify(total){
+      if (total >= 330) return "AVANZADO";
+      if (total >= 260) return "ESTÁNDAR";
+      return "BÁSICO";
+    }
+
+    // =============================
+    // 3) VALIDACIÓN
+    // =============================
+    function setFieldMsg(id, ok, text){
+      const el = $(id);
+      el.textContent = text || "";
+      el.classList.remove("ok","bad");
+      if (text) el.classList.add(ok ? "ok" : "bad");
+    }
+
+    function validateName(){
+      const v = ($("name").value || "").trim();
+      if (v.length < 2) { setFieldMsg("msgName", false, "Requerido."); return false; }
+      setFieldMsg("msgName", true, "OK"); return true;
+    }
+
+    function validatePhone(){
+      const raw = $("phone").value || "";
+      const d = digitsOnly(raw);
+      const ok = (d.length === 10) || (d.length === 11 && d.startsWith("1"));
+      if (!ok) { setFieldMsg("msgPhone", false, "Requerido (10 dígitos)."); return false; }
+      setFieldMsg("msgPhone", true, "OK"); return true;
+    }
+
+    function validateEquipment(){
+      const v = ($("equipment").value || "").trim();
+      if (v.length < 4) { setFieldMsg("msgEquip", false, "Requerido (marca y modelo)."); return false; }
+      setFieldMsg("msgEquip", true, "OK"); return true;
+    }
+
+    function validateGoal(){
+      const v = ($("goal").value || "").trim();
+      if (!v) { setFieldMsg("msgGoal", false, "Requerido."); return false; }
+      setFieldMsg("msgGoal", true, "OK"); return true;
+    }
+
+    function validateAddress(){
+      const v = ($("address").value || "").trim();
+      const zipOk = /\b\d{5}\b/.test(v);
+      const lenOk = v.length >= 18;
+      const commaOk = v.includes(",");
+      const ok = lenOk && zipOk && commaOk;
+      if (!ok) { setFieldMsg("msgAddress", false, "Requerida (incluye comas y ZIP Code de 5 dígitos)."); return false; }
+      setFieldMsg("msgAddress", true, "OK"); return true;
+    }
+
+    function validateDetails(){
+      const v = ($("details").value || "").trim();
+      const wc = normWordsCount(v);
+      if (wc < 1) { setFieldMsg("msgDetails", false, "Requerido (mínimo 1 palabra)."); return false; }
+      if (wc <= 10) setFieldMsg("msgDetails", true, `OK (${wc} palabra${wc===1?"":"s"})`);
+      else setFieldMsg("msgDetails", true, `OK (${wc} palabras)`);
+      return true;
+    }
+
+    function validatePersonalBlock(){
+      const ok =
+        validateName() &
+        validatePhone() &
+        validateEquipment() &
+        validateGoal() &
+        validateAddress() &
+        validateDetails();
+      return !!ok;
+    }
+
+    function canSend(){
+      return DB_READY && isCompleteSelection() && validatePersonalBlock();
+    }
+
+    // =============================
+    // 4) RESUMEN FINAL + LINKS
+    // =============================
+    function buildFinalText(total, cls){
+      const name = ($("name").value || "").trim() || "[Tu nombre]";
+      const phone = digitsOnly($("phone").value || "").trim() || "[Teléfono]";
+      const equipment = ($("equipment").value || "").trim() || "[Marca y modelo]";
+      const protection = ($("goal").value || "").trim() || "[Nivel de protección]";
+      const address = ($("address").value || "").trim() || "[Dirección completa + ZIP Code]";
+      const extra = ($("details").value || "").trim() || "[Detalles adicionales]";
+
+      const lines = [
+        `PROYECTO HomePower Switch`,
+        `Cliente: ${name}`,
+        `Teléfono: ${phone}`,
+        `Equipo/Generador: ${equipment}`,
+        `Nivel de protección: ${protection}`,
+        `Dirección del pedido: ${address}`,
+        ``,
+        `Selecciones técnicas:`,
+        `- Voltaje del sistema: ${state.volt || "[No seleccionado]"}`,
+        `- Conector NEMA (EcoFlow/Generador): ${state.nema || "[No seleccionado]"}`,
+        `- Pies cable ENTRANTE: ${state.lenIn || "[No seleccionado]"}`,
+        `- Pies cable SALIENTE: ${state.lenOut || "[No seleccionado]"}`,
+        `- Pies cable EcoFlow/Generador: ${state.lenGen || "[No seleccionado]"}`,
+        `- Protección (alcance): ${state.prot || "[No seleccionado]"}`,
+        `- Retardo reconexión: ${state.delay || "[No seleccionado]"}`,
+        `- Pantalla informativa: ${state.screen || "[No seleccionado]"}`,
+        `- Toma de servicio protegida (incluida): NEMA 5-20R`,
+        `- Pies cable toma de servicio: ${state.lenService || "[No seleccionado]"}`,
+        ``,
+        `Clasificación del proyecto: ${cls}`,
+        `Total estimado: $${Math.round(total)}`,
+        ``,
+        `Detalles adicionales:`,
+        extra,
+        ``,
+        `Nota 220V: Si tu vivienda usa dos fases de 110V (cada una con neutro), un generador 110V respaldará solo una fase. Equipos 220V deben quedar fuera del respaldo.`
+      ];
+      return lines.join("\n");
+    }
+
+    function setLinks(finalText){
+      const wa = "https://wa.me/" + PHONE_E164 + "?text=" + encodeURIComponent(finalText);
+      const mail = "mailto:" + EMAIL
+        + "?subject=" + encodeURIComponent("Proyecto HomePower Switch - Panel/ATS a pedido")
+        + "&body=" + encodeURIComponent(finalText);
+
+      $("btnWhatsApp").href = wa;
+      $("btnEmail").href = mail;
+    }
+
+    function setDBStatus(ok, msg){
+      const el = $("dbStatus");
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.remove("ok","bad","warn");
+      el.classList.add(ok ? "ok" : "bad");
+    }
+
+    function setSendStatus(){
+      const el = $("sendStatus");
+      if (!el) return;
+      if (canSend()){
+        el.textContent = "Envío: listo";
+        el.classList.remove("warn","bad"); el.classList.add("ok");
+      } else {
+        el.textContent = "Envío: bloqueado (faltan datos)";
+        el.classList.remove("ok","bad"); el.classList.add("warn");
+      }
+    }
+
+    function setSelectionStatus(){
+      const el = $("selectionStatus");
+      if (!el) return;
+      if (!DB_READY){
+        el.textContent = "Selección: esperando base de precios";
+        return;
+      }
+      el.textContent = isCompleteSelection() ? "Selección: completa" : "Selección: incompleta";
+      el.classList.remove("ok","bad","warn");
+      el.classList.add(isCompleteSelection() ? "ok" : "warn");
+    }
+
+    function refreshFinalBox(){
+      const finalBox = $("finalResultBox");
+      const ready = DB_READY && isCompleteSelection();
+
+      setSelectionStatus();
+
+      if (!ready){
+        finalBox.style.display = "none";
+        return;
+      }
+
+      const ctx = buildCtx();
+      const total = calcTotalFromDB(ctx);
+      const cls = classify(total);
+      const text = buildFinalText(total, cls);
+
+      $("finalClass").textContent = cls;
+      $("finalTotal").textContent = `$${Math.round(total)}`;
+      $("finalText").textContent = text;
+
+      finalBox.style.display = "block";
+      setLinks(text);
+
+      const okToSend = canSend();
+      $("btnEmail").classList.toggle("disabled", !okToSend);
+      $("btnWhatsApp").classList.toggle("disabled", !okToSend);
+
+      setSendStatus();
+    }
+
+    function refreshAll(){
+      ["volt","nema","lenIn","lenOut","lenGen","prot","delay","screen","lenService"].forEach(g => ensureOneSelected(g));
+      refreshFinalBox();
+
+      // Enlace contextual de Equipo -> galería
+      updateEquipmentGalleryLink();
+    }
+
+    function goToProject(){
+      $("proyecto").scrollIntoView({ behavior:"smooth", block:"start" });
+      setTimeout(()=> $("name")?.focus(), 450);
+    }
+
+    // =============================
+    // 5) BIBLIOTECA (library.json)
+    // =============================
+    const TITLE_MAP = {
+      "ats": "ATS (Transfer Switch Automático)",
+      "ats-2p-110v": "ATS 2P – 110V",
+      "ats-4p-110v-220v": "ATS 4P – 110V / 220V",
+
+      "breaker-2p": "Breaker dos polos",
+      "breaker-3p": "Breaker tres polos",
+
+      "protector-voltaje": "Protector de voltaje (alto/bajo)",
+      "monitor-multifuncion": "Monitor de CA (multifunción)",
+
+      "nema-5-15p": "Conector NEMA 5-15P",
+      "nema-5-20r": "Toma NEMA 5-20R",
+      "nema-tt-30p": "Conector NEMA TT-30P",
+
+      "ecoflow-delta2": "EcoFlow Delta 2",
+      "ecoflow-delta2-max": "EcoFlow Delta 2 Max",
+      "ecoflow-delta2-pro": "EcoFlow Delta 2 Pro",
+      "ecoflow-delta3-ultra": "EcoFlow Delta 3 Ultra",
+    };
+
+    const HINT_MAP = {
+      "ats": "Cambio automático entre fuentes.",
+      "ats-2p-110v": "ATS para 110V (2 polos).",
+      "ats-4p-110v-220v": "ATS para 110V/220V (4 polos).",
+      "breaker-2p": "Protección interna / DIN.",
+      "breaker-3p": "Para configuración requerida.",
+      "protector-voltaje": "Bajo/alto voltaje + protección.",
+      "monitor-multifuncion": "Pantalla informativa / medición.",
+      "nema-5-15p": "Conector estándar 15A/125V.",
+      "nema-5-20r": "Servicio protegido para carga.",
+      "nema-tt-30p": "Conector RV 30A.",
+    };
+
+    const ORDER = [
+      "ats-2p-110v",
+      "ats-4p-110v-220v",
+      "breaker-2p",
+      "breaker-3p",
+      "protector-voltaje",
+      "monitor-multifuncion",
+      "nema-5-15p",
+      "nema-5-20r",
+      "nema-tt-30p",
+      "ecoflow-delta2",
+      "ecoflow-delta2-pro",
+      "ecoflow-delta2-max",
+      "ecoflow-delta3-ultra",
+      "ats"
+    ];
+
+    let LIB = {}; // { slug: { title, slug, hint, images:[...] } }
+
+    async function loadLibraryJson(){
+      const res = await fetch("./library.json", { cache:"no-store" });
+      if (!res.ok) throw new Error("No se encontró library.json");
+      const data = await res.json();
+      if (!data || typeof data !== "object") throw new Error("library.json inválido");
+      return data;
+    }
+
+    function prettifySlug(slug){
+      return String(slug)
+        .replace(/[-_]+/g, " ")
+        .replace(/\b(\w)/g, (m)=> m.toUpperCase());
+    }
+
+    function normalizeImages(slug, files){
+      const list = Array.isArray(files) ? files : [];
+      return list.map(fn => `images/library/${slug}/${fn}`);
+    }
+
+    function buildLibrary(libJson){
+      const out = {};
+      if (libJson && typeof libJson === "object"){
+        for (const [slug, files] of Object.entries(libJson)){
+          if (!Array.isArray(files)) continue;
+          const title = TITLE_MAP[slug] || prettifySlug(slug);
+          const hint  = HINT_MAP[slug]  || "";
+          out[slug] = { title, slug, hint, images: normalizeImages(slug, files) };
+        }
+        return out;
+      }
+      return out;
+    }
+
+    // Compatibilidad si existe una llamada antigua
+    function buildLibraryFromSources(libJson){
+      return buildLibrary(libJson);
+    }
+
+    function pickThumb(images){ return images && images.length ? images[0] : ""; }
+
+    function getSortedSlugs(){
+      const slugs = Object.keys(LIB);
+      const orderIndex = new Map(ORDER.map((s,i)=>[s,i]));
+      slugs.sort((a,b)=>{
+        const ia = orderIndex.has(a) ? orderIndex.get(a) : 10_000;
+        const ib = orderIndex.has(b) ? orderIndex.get(b) : 10_000;
+        if (ia != ib) return ia - ib;
+        return a.localeCompare(b, "es", { sensitivity:"base" });
+      });
+      return slugs;
+    }
+
+    function renderLibraryGrid(){
+      const grid = $("libGrid");
+      grid.innerHTML = "";
+
+      const slugs = getSortedSlugs();
+      for (const slug of slugs){
+        const item = LIB[slug];
+        if (!item) continue;
+
+        const thumb = pickThumb(item.images);
+        const count = item.images.length;
+
+        const card = document.createElement("div");
+        card.className = "libCard";
+        card.setAttribute("data-open-lib", slug);
+
+        const img = document.createElement("img");
+        img.className = "libThumb";
+        img.alt = item.title;
+        img.src = thumb || "";
+        if (!thumb){
+          img.style.height = "140px";
+          img.style.objectFit = "contain";
+        }
+
+        const body = document.createElement("div");
+        body.className = "libBody";
+        const hint = item.hint ? item.hint : "Referencia visual";
+        body.innerHTML = `
+          <div class="libTitle">${item.title}</div>
+          <p class="libMeta">${hint} · ${count} imagen${count===1?"":"es"}</p>
+        `;
+
+        card.appendChild(img);
+        card.appendChild(body);
+        grid.appendChild(card);
+
+        card.addEventListener("click", ()=> openGallery(slug));
+      }
+    }
+
+    // =============================
+    // 6) MODAL GALERÍA
+    // =============================
+    let galleryState = { key:"", idx:0, images:null, title:"" };
+
+    function openGallery(key){
+      const item = LIB[key];
+      if (!item || !item.images || !item.images.length) return;
+      galleryState.key = key;
+      galleryState.idx = 0;
+      galleryState.images = item.images;
+      galleryState.title = item.title;
+
+      $("modalTitle").textContent = item.title;
+      renderGallery();
+      $("modalBack").style.display = "flex";
+      $("modalBack").setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+    }
+
+    // Abre un modal con imágenes combinadas (ej: NEMA 5-15P + TT-30P)
+    function openGalleryCombined(title, images){
+      const list = Array.isArray(images) ? images.filter(Boolean) : [];
+      if (!list.length) return;
+      galleryState.key = "_combined_";
+      galleryState.idx = 0;
+      galleryState.images = list;
+      galleryState.title = title || "Galería";
+
+      $("modalTitle").textContent = galleryState.title;
+      renderGallery();
+      $("modalBack").style.display = "flex";
+      $("modalBack").setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeGallery(){
+      $("modalBack").style.display = "none";
+      $("modalBack").setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+    }
+
+    function renderGallery(){
+      const imgs = galleryState.images || [];
+      if (!imgs.length) return;
+
+      const idx = Math.max(0, Math.min(galleryState.idx, imgs.length-1));
+      galleryState.idx = idx;
+
+      $("modalBigImg").src = imgs[idx];
+
+      const row = $("thumbRow");
+      row.innerHTML = "";
+      imgs.forEach((src,i)=>{
+        const t = document.createElement("img");
+        t.className = "thumb" + (i===idx ? " active" : "");
+        t.src = src;
+        t.alt = (galleryState.title || "Imagen") + " " + (i+1);
+        t.addEventListener("click", ()=>{ galleryState.idx = i; renderGallery(); });
+        row.appendChild(t);
+      });
+    }
+
+    function nextImg(){
+      const imgs = galleryState.images || [];
+      if (!imgs.length) return;
+      galleryState.idx = (galleryState.idx + 1) % imgs.length;
+      renderGallery();
+    }
+    function prevImg(){
+      const imgs = galleryState.images || [];
+      if (!imgs.length) return;
+      galleryState.idx = (galleryState.idx - 1 + imgs.length) % imgs.length;
+      renderGallery();
+    }
+
+    // =============================
+    // 7) VÍNCULOS CONTEXTUALES A GALERÍA (CAMBIOS)
+    // =============================
+
+    // Cambio 1: ATS según voltaje
+    function atsSlugForVolt(){
+      if (state.volt === "110 V") return "ats-2p-110v";
+      if (state.volt === "220 V") return "ats-4p-110v-220v";
+      return "ats";
+    }
+
+    // Cambio 2: Mostrar ambos conectores (5-15P + TT-30P) tanto en 110V como en 220V
+    function openNemaBoth(){
+      const a = LIB["nema-5-15p"]?.images || [];
+      const b = LIB["nema-tt-30p"]?.images || [];
+      openGalleryCombined("Conectores NEMA (5-15P + TT-30P)", [...a, ...b]);
+    }
+
+    // Cambio 3: Equipo -> galería si existe
+    const EQUIPMENT_TO_SLUG = [
+      { slug:"ecoflow-delta3-ultra", keys:["delta 3 ultra","delta3 ultra","delta 3","delta3"] },
+      { slug:"ecoflow-delta2-pro",   keys:["delta 2 pro","delta2 pro"] },
+      { slug:"ecoflow-delta2-max",   keys:["delta 2 max","delta2 max"] },
+      { slug:"ecoflow-delta2",       keys:["delta 2","delta2"] },
+    ];
+
+    function matchEquipmentSlug(text){
+      const t = (text || "").toLowerCase();
+      if (!t) return "";
+      // Si no menciona EcoFlow pero coincide, igual abre
+      for (const rule of EQUIPMENT_TO_SLUG){
+        for (const k of rule.keys){
+          if (t.includes(k)) return rule.slug;
+        }
+      }
+      return "";
+    }
+
+    function updateEquipmentGalleryLink(){
+      const btn = $("btnEquipGallery");
+      if (!btn) return;
+
+      const eq = $("equipment")?.value || "";
+      const slug = matchEquipmentSlug(eq);
+
+      if (slug && LIB[slug] && (LIB[slug].images || []).length){
+        btn.style.display = "inline-flex";
+        btn.textContent = `Ver fotos: ${LIB[slug].title}`;
+        btn.onclick = ()=> openGallery(slug);
+      } else {
+        btn.style.display = "none";
+        btn.onclick = null;
+      }
+    }
+
+    // =============================
+    // 8) DIRECCIÓN: Sugerencias al escribir (Google Places) + UI custom
+    // =============================
+    function showAddrDropdown(items){
+      const box = $("addrDropdown");
+      if (!box) return;
+      box.innerHTML = "";
+
+      const clean = Array.isArray(items) ? items : [];
+      if (!clean.length){
+        box.style.display = "none";
+        return;
+      }
+
+      for (const it of clean.slice(0, 6)){
+        const div = document.createElement("div");
+        div.className = "addrItem";
+        div.setAttribute("role","option");
+        div.innerHTML = `${it.main || it.text || ""}${it.sub ? `<span class="addrSub">${it.sub}</span>` : ""}`;
+        div.addEventListener("click", ()=>{
+          $("address").value = it.text || it.main || "";
+          box.style.display = "none";
+          validateAddress();
+          refreshAll();
+        });
+        box.appendChild(div);
+      }
+
+      box.style.display = "block";
+    }
+
+    function hideAddrDropdown(){
+      const box = $("addrDropdown");
+      if (!box) return;
+      box.style.display = "none";
+    }
+
+    async function loadGoogleMapsScript(){
+      if (!GOOGLE_MAPS_API_KEY) return false;
+
+      // Evita cargar dos veces
+      if (window.google && window.google.maps && window.google.maps.places) return true;
+
+      return new Promise((resolve) => {
+        const s = document.createElement("script");
+        s.async = true;
+        s.defer = true;
+        s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}&libraries=places&language=es`;
+        s.onload = () => resolve(true);
+        s.onerror = () => resolve(false);
+        document.head.appendChild(s);
+      });
+    }
+
+    function initPlacesAutocomplete(){
+      const input = $("address");
+      if (!input || !(window.google && google.maps && google.maps.places)) return;
+
+      const service = new google.maps.places.AutocompleteService();
+
+      let lastReqId = 0;
+      input.addEventListener("input", ()=>{
+        const q = (input.value || "").trim();
+        if (q.length < 5){
+          hideAddrDropdown();
+          return;
+        }
+        const reqId = ++lastReqId;
+        service.getPlacePredictions(
+          {
+            input: q,
+            // Ajusta si quieres restringir; por ahora lo dejamos abierto.
+            // componentRestrictions: { country: ["us","cu"] }
+          },
+          (predictions, status) => {
+            if (reqId !== lastReqId) return;
+            if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions){
+              hideAddrDropdown();
+              return;
+            }
+            const items = predictions.map(p => ({
+              text: p.description,
+              main: p.structured_formatting?.main_text || p.description,
+              sub: p.structured_formatting?.secondary_text || ""
+            }));
+            showAddrDropdown(items);
+          }
+        );
+      });
+
+      input.addEventListener("blur", ()=>{
+        // pequeño delay para permitir click en dropdown
+        setTimeout(()=> hideAddrDropdown(), 180);
+      });
+    }
+
+    // =============================
+    // INIT
+    // =============================
+    async function init(){
+      // fondo
+      startBackgroundSlideshow();
+
+      // longitudes
+      makeLengthChips("lenInRow", "lenIn", 1, 5, "ft");
+      makeLengthChips("lenOutRow","lenOut",1, 5, "ft");
+      makeLengthChips("lenGenRow","lenGen",4, 8, "ft");
+      makeLengthChips("lenServiceRow","lenService",1, 8, "ft");
+
+      bindChips();
+
+      // defaults
+      state.volt = "110 V";
+      state.nema = "NEMA 5-15P";
+      state.lenIn = "1 ft";
+      state.lenOut = "1 ft";
+      state.lenGen = "4 ft";
+      state.prot = "Dedicada (solo toma de servicio)";
+      state.delay = "1 min";
+      state.screen = "NO";
+      state.lenService = "1 ft";
+
+      // listeners
+      ["name","phone","equipment","address","details"].forEach(id=>{
+        $(id)?.addEventListener("input", ()=>{ validatePersonalBlock(); refreshAll(); });
+      });
+      $("goal")?.addEventListener("change", ()=>{ validatePersonalBlock(); refreshAll(); });
+
+      $("btnBuild").addEventListener("click", ()=>{ validatePersonalBlock(); refreshAll(); });
+      $("btnPedir").addEventListener("click", ()=>{ goToProject(); validatePersonalBlock(); refreshAll(); });
+
+      // año
+      $("year").textContent = new Date().getFullYear();
+
+      // WhatsApp TOP: abrir chat
+      $("btnWhatsAppTop").href = "https://wa.me/" + PHONE_E164;
+
+      // cargar CSV precios
+      try{
+        setDBStatus(false, "Base de precios: cargando…");
+        PRICE_DB = await loadPriceDB("pricedb.csv");
+        DB_READY = true;
+        setDBStatus(true, "Base de precios: lista (pricedb.csv)");
+      }catch(err){
+        DB_READY = false;
+        setDBStatus(false, "Base de precios: ERROR (falta pricedb.csv)");
+        console.error(err);
+      }
+
+      // cargar biblioteca
+      let libJson = null;
+      try{
+        libJson = await loadLibraryJson();
+      }catch(e){
+        libJson = null;
+      }
+      LIB = buildLibraryFromSources(libJson);
+      renderLibraryGrid();
+
+      // Botones "Ver fotos" (cambios de vínculo)
+      document.querySelectorAll("[data-lib-open]").forEach(btn=>{
+        btn.addEventListener("click", (ev)=>{
+          ev.preventDefault();
+          ev.stopPropagation();
+          const key = btn.getAttribute("data-lib-open");
+
+          if (key === "voltaje"){
+            // Cambio 1: 110V => ATS 2P, 220V => ATS 4P
+            openGallery(atsSlugForVolt());
+            return;
+          }
+
+          if (key === "ats"){
+            // Igual que arriba: ATS depende de voltaje
+            openGallery(atsSlugForVolt());
+            return;
+          }
+
+          if (key === "nema"){
+            // Cambio 2: siempre mostrar ambos conectores
+            openNemaBoth();
+            return;
+          }
+
+          if (key === "protector") openGallery("protector-voltaje");
+          else if (key === "monitor") openGallery("monitor-multifuncion");
+          else if (key === "nema520r") openGallery("nema-5-20r");
+        });
+      });
+
+      // modal events
+      $("modalClose").addEventListener("click", closeGallery);
+      $("modalNext").addEventListener("click", nextImg);
+      $("modalPrev").addEventListener("click", prevImg);
+      $("modalBack").addEventListener("click", (e)=>{ if (e.target === $("modalBack")) closeGallery(); });
+      document.addEventListener("keydown", (e)=>{
+        if ($("modalBack").style.display !== "flex") return;
+        if (e.key === "Escape") closeGallery();
+        if (e.key === "ArrowRight") nextImg();
+        if (e.key === "ArrowLeft") prevImg();
+      });
+
+      // Autocomplete dirección
+      try{
+        const ok = await loadGoogleMapsScript();
+        if (ok) initPlacesAutocomplete();
+      }catch(e){
+        // no-op
+      }
+
+      // ocultar dropdown al presionar Escape
+      document.addEventListener("keydown", (e)=>{
+        if (e.key === "Escape") hideAddrDropdown();
+      });
+
+      validatePersonalBlock();
+      refreshAll();
+    }
+
+    init();
+  </script>
+</body>
+</html>

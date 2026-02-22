@@ -1,0 +1,20 @@
+group_id,group_name,item_code,item_desc,condition,qty,unit_price,price_unit,depends_on,notes
+1,Voltaje (cables entrada/salida),RC_10_3,Royal Cord 10/3 (entrada+salida),voltaje=110,1,8,per_ft,len_in+len_out,Tarifa por pie aplicada a (pies_entrante + pies_saliente)
+1,Voltaje (cables entrada/salida),RC_10_4,Royal Cord 10/4 (entrada+salida),voltaje=220,1,10,per_ft,len_in+len_out,Tarifa por pie aplicada a (pies_entrante + pies_saliente)
+2,Conector interconexion (EcoFlow/Generador),NEMA_5_15P,Conector NEMA 5-15P,conector=NEMA 5-15P,1,8,each,-,Solo 1 unidad
+2,Conector interconexion (EcoFlow/Generador),NEMA_TT_30P,Conector NEMA TT-30P,conector=NEMA TT-30P,1,15,each,-,Solo 1 unidad
+3,Breakers,BRK_2P_400V_32A,Breaker 2P 400V 32A,voltaje=110,3,9,each,-,-
+3,Breakers,BRK_2P_400V_32A,Breaker 2P 400V 32A,voltaje=220,2,9,each,-,-
+3,Breakers,BRK_3P_400V_32A,Breaker 3P 400V 32A,voltaje=220,1,15,each,-,-
+4,ATS,ATS_2P_110V_100A,ATS 2P 110V 100A,voltaje=110,1,45,each,-,-
+4,ATS,ATS_4P_110_220V_100A,ATS 4P 110/220V 100A,voltaje=220,1,55,each,-,-
+5,Proteccion voltaje bajo/alto,PROT_LINE_80A,Protector de linea hasta 80A,voltaje=110,1,30,each,-,-
+5,Proteccion voltaje bajo/alto,PROT_LINE_80A,Protector de linea hasta 80A,voltaje=220,2,30,each,-,-
+6,Pantalla informativa (opcional),SCREEN_INFO,Pantalla informativa,voltaje=110 AND pantalla=SI,1,25,each,-,Si pantalla=NO; costo 0
+6,Pantalla informativa (opcional),SCREEN_INFO,Pantalla informativa,voltaje=220 AND pantalla=SI,2,25,each,-,Si pantalla=NO; costo 0
+7,Caja para panel,BOX_18,Caja 18 capacidades,voltaje=110,1,30,each,-,Asumido: 110V usa 18 capacidades
+7,Caja para panel,BOX_24,Caja 24 capacidades,voltaje=220,1,35,each,-,Asumido: 220V usa 24 capacidades
+8,Cable interconexion EcoFlow/Generador,RC_10_3_GEN,Royal Cord 10/3 (cable interconexion),siempre,1,8,per_ft,len_gen,Tarifa por pie aplicada a pies_cable_ecoflow/generador
+9,Toma servicio (opcional),RC_12_2_SERVICE,Royal Cord 12/2 (toma servicio),toma_servicio=SI,1,5,per_ft,len_service,Tarifa por pie aplicada a pies_toma_servicio
+9,Toma servicio (opcional),FEMALE_20A,Conector hembra 20A,toma_servicio=SI,1,10,each,-,Si toma_servicio=NO; costo 0
+10,Mano de obra + interiores,LABOR_INTERNAL,Mano de obra + conectores y cables interiores,siempre,1,100,each,-,Costo fijo
